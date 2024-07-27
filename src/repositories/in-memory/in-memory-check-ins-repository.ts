@@ -46,4 +46,12 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
 
     return checkInsFilter;
   }
+
+  async countByUserId(userId: string): Promise<number> {
+    const checkInsCount = this.items.filter(
+      (item) => item.user_id === userId,
+    ).length;
+
+    return checkInsCount;
+  }
 }
