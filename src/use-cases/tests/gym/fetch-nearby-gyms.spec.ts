@@ -59,4 +59,34 @@ describe("Fetch Nearby Gyms Use Case", () => {
     expect(gyms).toHaveLength(0); // Não deve retornar academias distantes
     expect(gyms).toEqual([]);
   });
+
+  it("Should fetch multiple gyms within 10 km radius", async () => {
+    await gymsRepository.create({
+      title: "Near Gym 1",
+      description: "",
+      phone: "",
+      latitude: -23.6870365,
+      longitude: -46.7167728,
+    });
+
+    await gymsRepository.create({
+      title: "Near Gym 2",
+      description: "",
+      phone: "",
+      latitude: -23.6820365,
+      longitude: -46.7127728,
+    });
+
+    const { gyms } = await sut.execute({
+      userLatitude: -23.6870365,
+      userLongitude: -46.7167728,
+    });
+
+    // Caso tenha mais de 1 academia num raio de 10km
+    expect(gyms).toHaveLength(2); // Deve retornar as duas academias
+    expect(gyms).toEqual([
+      expect.objectContaining({ title: "Near Gym 1" }),
+      expect.objectContaining({ title: "Near Gym 2" }),
+    ]);
+  });
 });
