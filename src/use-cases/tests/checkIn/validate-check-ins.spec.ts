@@ -7,6 +7,7 @@ import { MaxNumberOfCheckInsError } from "@/use-cases/errors/max-number-of-check
 import { MaxDistanceError } from "@/use-cases/errors/max-distance-error";
 import { ValidateCheckInsUseCase } from "@/use-cases/modules/checkIn/validate-check-ins";
 import { ResourceNotFoundError } from "@/use-cases/errors/resource-not-found-error";
+import { LateCheckInValidationError } from "@/use-cases/errors/late-check-in-validation-error";
 
 // let gymsRepository: InMemoryGymsRepository;
 let checkInsRepository: InMemoryCheckInsRepository;
@@ -28,11 +29,11 @@ describe("Validate Check-ins Use Case", () => {
     //   longitude: -46.7167728,
     // });
 
-    // vi.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
-    // vi.useRealTimers();
+    vi.useRealTimers();
   });
 
   it("Should be able to validate check ins", async () => {
@@ -59,5 +60,22 @@ describe("Validate Check-ins Use Case", () => {
         checkInId: "inexistent-check-in-id",
       }),
     ).rejects.toBeInstanceOf(ResourceNotFoundError);
+  });
+
+  it("Should not be able to validate the check-ins after 20 minutes of its creation", async () => {
+    vi.setSystemTime(new Date(2024, 0, 1, 13, 40));
+
+    const createdCheckIn = await checkInsRepository.create({
+      gym_id: "gym-01",
+      user_id: "user-01",
+    });
+
+    vi.advanceTimersByTime(1000 * 60 * 21); // 21 mins in milliseconds
+
+    await expect(() =>
+      sut.execute({
+        checkInId: createdCheckIn.id,
+      }),
+    ).rejects.toBeInstanceOf(LateCheckInValidationError);
   });
 });
