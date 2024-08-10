@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
-import { register } from "./modules/user/controllers/register";
-import { autenticate } from "./modules/auth/controllers/authenticate";
-import { profile } from "./modules/user/controllers/profile";
+import { register } from "./controllers/user/register";
+import { autenticate } from "./controllers/auth/authenticate";
+import { profile } from "./controllers/user/profile";
 import { verifyJwt } from "./middlewares/verify-jwt";
 
 /*
