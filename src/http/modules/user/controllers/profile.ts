@@ -1,12 +1,17 @@
-import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-repository";
-import { AuthenticateUseCase } from "@/use-cases/auth/authenticate-use-case";
-import { InvalidCredentialsError } from "@/use-cases/errors/invalid-credentials-error";
-import { makeAuthenticateUseCase } from "@/use-cases/factories/user/make-authenticate-use-case";
+import { makeGetUserProfileUseCase } from "@/use-cases/factories/user/make-get-user-profile-use-case";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { z } from "zod";
 
 export const profile = async (request: FastifyRequest, reply: FastifyReply) => {
-  await request.jwtVerify();
+  const getUserProfile = makeGetUserProfileUseCase();
 
-  return reply.status(200).send();
+  const { user } = await getUserProfile.execute({
+    userId: request.user.sub,
+  });
+
+  return reply.status(200).send({
+    user: {
+      ...user,
+      password_hash: undefined,
+    },
+  });
 };
