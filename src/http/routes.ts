@@ -1,6 +1,16 @@
 import { FastifyInstance } from "fastify";
 import { register } from "./modules/user/controllers/register";
 import { autenticate } from "./modules/auth/controllers/authenticate";
+import { profile } from "./modules/user/controllers/profile";
+
+/*
+  Tipos de autentificação:
+
+  - Basic Auth (Base64)
+  - JWT
+  - API Token
+  - OAuth
+*/
 
 export const appRoutes = async (app: FastifyInstance) => {
   // auth routes
@@ -8,4 +18,6 @@ export const appRoutes = async (app: FastifyInstance) => {
 
   // users routes
   app.post("/users", register);
+
+  app.get("/me", profile);
 };
