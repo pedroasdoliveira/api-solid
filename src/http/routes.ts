@@ -2,6 +2,7 @@ import { FastifyInstance } from "fastify";
 
 import { userRoutes } from "./routes/userRoutes";
 import { gymRoutes } from "./routes/gymRoutes";
+import { checkInRoutes } from "./routes/checkInRoutes";
 
 /*
   Tipos de autentificação:
@@ -19,5 +20,6 @@ export const appRoutes = async (app: FastifyInstance) => {
   // gyms routes
   await app.register(gymRoutes);
 
-  //
+  // check-in routes
+  await app.register(checkInRoutes);
 };

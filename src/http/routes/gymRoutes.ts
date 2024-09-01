@@ -8,7 +8,7 @@ import { nearby } from "../controllers/gym/nearby";
 export const gymRoutes = async (app: FastifyInstance) => {
   app.addHook("onRequest", verifyJwt);
 
-  app.post("/gym", create);
+  app.post("/gyms", create);
 
   app.get("/gyms/search", search);
 
