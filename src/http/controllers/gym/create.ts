@@ -3,6 +3,14 @@ import { z } from "zod";
 
 import { makeCreateGymUseCase } from "@/use-cases/factories/gym/make-create-gym-use-case";
 
+// interface ICreateGymInput {
+//   title: string;
+//   description?: string;
+//   phone?: string;
+//   latitude: number;
+//   longitude: number;
+// }
+
 export const create = async (request: FastifyRequest, reply: FastifyReply) => {
   const createBodySchema = z.object({
     title: z.string(),
