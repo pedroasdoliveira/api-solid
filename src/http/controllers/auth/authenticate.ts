@@ -1,5 +1,3 @@
-import { PrismaUsersRepository } from "@/repositories/prisma/prisma-users-repository";
-import { AuthenticateUseCase } from "@/use-cases/auth/authenticate-use-case";
 import { InvalidCredentialsError } from "@/use-cases/errors/invalid-credentials-error";
 import { makeAuthenticateUseCase } from "@/use-cases/factories/user/make-authenticate-use-case";
 import { FastifyReply, FastifyRequest } from "fastify";
@@ -33,7 +31,25 @@ export const autenticate = async (
       },
     );
 
-    return reply.status(200).send({ token });
+    const refreshToken = await reply.jwtSign(
+      {},
+      {
+        sign: {
+          sub: user.id,
+          expiresIn: "7d",
+        },
+      },
+    );
+
+    return reply
+      .status(200)
+      .setCookie("refreshToken", refreshToken, {
+        path: "/",
+        secure: true, // HTTPS
+        sameSite: true,
+        httpOnly: true,
+      })
+      .send({ token });
   } catch (error) {
     if (error instanceof InvalidCredentialsError) {
       return reply.status(400).send({ message: error.message });
