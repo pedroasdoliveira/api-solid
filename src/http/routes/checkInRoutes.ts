@@ -5,13 +5,18 @@ import { createCheckIn } from "../controllers/check-in/create";
 import { validate } from "../controllers/check-in/validate";
 import { history } from "../controllers/check-in/history";
 import { metrics } from "../controllers/check-in/metrics";
+import { verifyUserRole } from "../middlewares/verify-user-role";
 
 export const checkInRoutes = async (app: FastifyInstance) => {
   app.addHook("onRequest", verifyJwt);
 
   app.post("/gyms/:gymId/check-ins", createCheckIn);
 
-  app.patch("/check-ins/:checkInId/validate", validate);
+  app.patch(
+    "/check-ins/:checkInId/validate",
+    { onRequest: [verifyUserRole("ADMIN")] },
+    validate,
+  );
 
   app.get("/check-ins/history", history);
 
